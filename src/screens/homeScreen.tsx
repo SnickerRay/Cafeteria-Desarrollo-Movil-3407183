@@ -8,7 +8,15 @@ import { productos } from '../data/mockData';
 import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
 import { Producto } from '../types';
 
+import { useNavigation } from '@react-navigation/native';
+import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import type { HomeStackParamList } from '../navigation/types';
+
 export default function HomeScreen() {
+    const navigation =
+        useNavigation<NativeStackNavigationProp<HomeStackParamList, 'HomeList'>>();
+
+
     const [busqueda, setBusqueda] = useState('');
 
     const productosFiltrados = useMemo(() => {
@@ -31,9 +39,12 @@ export default function HomeScreen() {
         ({ item }: { item: Producto }) => (
         <ItemCard
             producto={item}
-            onPress={(producto) => {
-            console.log('Producto seleccionado:', producto.nombre);
-            }}
+            onPress={(producto) =>
+            navigation.navigate('HomeDetail', {
+                id: producto.id.toString(),
+                name: producto.nombre,
+            })
+            }
         />
         ),
         [],
