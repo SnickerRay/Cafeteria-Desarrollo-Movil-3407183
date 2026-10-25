@@ -1,182 +1,188 @@
 {/*Este archivo tendrá el encabezado, la bienvenida, la lista horizontal de cafés y la navegación inferior*/}
 
-import { ScrollView, StyleSheet,Text,View,} from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import {FlatList,KeyboardAvoidingView,Platform,StyleSheet,Text,TextInput,View,} from 'react-native';
 
-import { productos } from '../data/mockData';
 import ItemCard from '../components/itemCard';
+import { productos } from '../data/mockData';
+import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
+import { Producto } from '../types';
 
 export default function HomeScreen() {
+    const [busqueda, setBusqueda] = useState('');
+
+    const productosFiltrados = useMemo(() => {
+        const termino = busqueda.trim().toLocaleLowerCase();
+
+        if (!termino) {
+        return productos;
+        }
+
+        return productos.filter((producto) => {
+        return (
+            producto.nombre.toLocaleLowerCase().includes(termino) ||
+            producto.descripcion.toLocaleLowerCase().includes(termino) ||
+            producto.categoria.toLocaleLowerCase().includes(termino)
+        );
+        });
+    }, [busqueda]);
+
+    const renderItem = useCallback(
+        ({ item }: { item: Producto }) => (
+        <ItemCard
+            producto={item}
+            onPress={(producto) => {
+            console.log('Producto seleccionado:', producto.nombre);
+            }}
+        />
+        ),
+        [],
+    );
+
+    const renderEmpty = () => (
+        <View style={styles.emptyContainer}>
+        <Text style={styles.emptyEmoji}>☕</Text>
+        <Text style={styles.emptyTitle}>
+            No encontramos esa bebida
+        </Text>
+        <Text style={styles.emptyText}>
+            Prueba con otro nombre o categoría y descubre algo nuevo.
+        </Text>
+        </View>
+    );
+
     return (
-        <View style={styles.screen}>
-        <ScrollView
-            style={styles.container}
-            showsVerticalScrollIndicator={false}
+        <KeyboardAvoidingView
+        style={styles.screen}
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
-            {/* Encabezado */}
+        <FlatList
+            data={productosFiltrados}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            ItemSeparatorComponent={() => <View style={styles.separator} />}
+            ListHeaderComponent={
             <View style={styles.header}>
-            <Text style={styles.brand}>BRUMA CAFÉ</Text>
-            <Text style={styles.subtitle}>Un momento para ti.</Text>
-            </View>
+                <Text style={styles.brand}>BRUMA CAFÉ</Text>
 
-            {/* Bienvenida */}
-            <View style={styles.welcomeCard}>
-            <Text style={styles.cardLabel}>
-                DESCUBRE TU PRÓXIMO FAVORITO
-            </Text>
+                <Text style={styles.welcome}>
+                Encuentra tu próximo café favorito.
+                </Text>
 
-            <Text style={styles.cardTitle}>
-                Tu café, tu momento.
-            </Text>
+                <Text style={styles.subtitle}>
+                Una pausa, un aroma, un momento para ti.
+                </Text>
 
-            <Text style={styles.cardDescription}>
-                Sabores para disfrutar sin afán.
-            </Text>
-            </View>
+                <Text style={styles.sectionTitle}>
+                Nuestro menú
+                </Text>
 
-            {/* Productos */}
-            <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>
-                Nuestros favoritos
-            </Text>
-
-            <Text style={styles.seeAll}>Ver todos</Text>
-            </View>
-
-            <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.productsList}
-            >
-            {productos.map((producto) => (
-                <ItemCard
-                key={producto.id}
-                producto={producto}
+                <TextInput
+                style={styles.searchInput}
+                placeholder="Buscar por nombre o categoría..."
+                placeholderTextColor={COLORS.placeholder}
+                value={busqueda}
+                onChangeText={setBusqueda}
+                autoCapitalize="none"
+                returnKeyType="search"
+                accessibilityLabel="Buscar productos del menú"
                 />
-            ))}
-            </ScrollView>
 
-            <View style={styles.bottomSpace} />
-        </ScrollView>
-
-        {/* Navegación inferior */}
-        <View style={styles.bottomNav}>
-            <View style={styles.navItem}>
-            <Text style={styles.navIcon}>⌂</Text>
-            <Text style={styles.navLabel}>Inicio</Text>
+                <Text style={styles.resultCount}>
+                {productosFiltrados.length === 1
+                    ? '1 bebida encontrada'
+                    : `${productosFiltrados.length} bebidas encontradas`}
+                </Text>
             </View>
-
-            <View style={styles.navItem}>
-            <Text style={styles.navIcon}>☕</Text>
-            <Text style={styles.navLabel}>Menú</Text>
-            </View>
-
-            <View style={styles.navItem}>
-            <Text style={styles.navIcon}>♡</Text>
-            <Text style={styles.navLabel}>Favoritos</Text>
-            </View>
-
-            <View style={styles.navItem}>
-            <Text style={styles.navIcon}>♙</Text>
-            <Text style={styles.navLabel}>Perfil</Text>
-            </View>
-        </View>
-        </View>
+            }
+            ListEmptyComponent={renderEmpty}
+            contentContainerStyle={styles.listContent}
+            keyboardShouldPersistTaps="handled"
+            showsVerticalScrollIndicator={false}
+        />
+        </KeyboardAvoidingView>
     );
     }
 
     const styles = StyleSheet.create({
     screen: {
         flex: 1,
-        backgroundColor: '#201713',
+        backgroundColor: COLORS.background,
     },
-    container: {
-        flex: 1,
-        backgroundColor: '#201713',
-        paddingHorizontal: 24,
-        paddingTop: 80,
+    listContent: {
+        paddingHorizontal: SPACING.md,
+        paddingTop: SPACING.xl,
+        paddingBottom: SPACING.xxl,
+        flexGrow: 1,
     },
     header: {
-        marginBottom: 32,
+        marginBottom: SPACING.lg,
     },
     brand: {
-        color: '#F2E4D0',
-        fontSize: 30,
-        fontWeight: 'bold',
+        color: COLORS.primary,
+        fontSize: TYPOGRAPHY.fontSizeSM,
+        fontWeight: TYPOGRAPHY.fontWeightBold,
         letterSpacing: 3,
+        marginBottom: SPACING.md,
+    },
+    welcome: {
+        color: COLORS.textOnDark,
+        fontSize: TYPOGRAPHY.fontSizeXXL,
+        fontWeight: TYPOGRAPHY.fontWeightBold,
+        marginBottom: SPACING.sm,
     },
     subtitle: {
-        color: '#C58B59',
-        fontSize: 16,
-        marginTop: 8,
-    },
-    welcomeCard: {
-        backgroundColor: '#634638',
-        padding: 24,
-        borderRadius: 24,
-        marginTop: 12,
-    },
-    cardLabel: {
-        color: '#E4C9A8',
-        fontSize: 10,
-        fontWeight: 'bold',
-        letterSpacing: 1.5,
-        marginBottom: 14,
-    },
-    cardTitle: {
-        color: '#FFFFFF',
-        fontSize: 27,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    cardDescription: {
-        color: '#F2E4D0',
-        fontSize: 14,
-        lineHeight: 21,
-    },
-    sectionHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginTop: 32,
-        marginBottom: 16,
+        color: COLORS.border,
+        fontSize: TYPOGRAPHY.fontSizeMD,
+        lineHeight: 22,
+        marginBottom: SPACING.xl,
     },
     sectionTitle: {
-        color: '#F2E4D0',
-        fontSize: 20,
-        fontWeight: 'bold',
+        color: COLORS.textOnDark,
+        fontSize: TYPOGRAPHY.fontSizeXL,
+        fontWeight: TYPOGRAPHY.fontWeightSemiBold,
+        marginBottom: SPACING.md,
     },
-    seeAll: {
-        color: '#C58B59',
-        fontSize: 13,
-        fontWeight: '600',
+    searchInput: {
+        backgroundColor: COLORS.surface,
+        color: COLORS.textPrimary,
+        borderWidth: 1,
+        borderColor: COLORS.border,
+        borderRadius: 14,
+        paddingHorizontal: SPACING.md,
+        paddingVertical: SPACING.md,
+        fontSize: TYPOGRAPHY.fontSizeMD,
     },
-    productsList: {
-        gap: 16,
-        paddingRight: 24,
+    resultCount: {
+        color: COLORS.border,
+        fontSize: TYPOGRAPHY.fontSizeSM,
+        marginTop: SPACING.sm,
     },
-    bottomNav: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
+    separator: {
+        height: SPACING.md,
+    },
+    emptyContainer: {
+        flex: 1,
         alignItems: 'center',
-        backgroundColor: '#30221C',
-        paddingVertical: 14,
-        paddingBottom: 24,
-        borderTopWidth: 1,
-        borderTopColor: '#634638',
+        justifyContent: 'center',
+        paddingHorizontal: SPACING.lg,
+        paddingVertical: SPACING.xxl,
     },
-    navItem: {
-        alignItems: 'center',
-        gap: 5,
+    emptyEmoji: {
+        fontSize: 40,
+        marginBottom: SPACING.md,
     },
-    navIcon: {
-        color: '#C58B59',
-        fontSize: 23,
+    emptyTitle: {
+        color: COLORS.textOnDark,
+        fontSize: TYPOGRAPHY.fontSizeLG,
+        fontWeight: TYPOGRAPHY.fontWeightBold,
+        textAlign: 'center',
+        marginBottom: SPACING.sm,
     },
-    navLabel: {
-        color: '#F2E4D0',
-        fontSize: 11,
-    },
-    bottomSpace: {
-        height: 24,
+    emptyText: {
+        color: COLORS.border,
+        fontSize: TYPOGRAPHY.fontSizeMD,
+        textAlign: 'center',
+        lineHeight: 22,
     },
     });

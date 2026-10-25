@@ -1,95 +1,95 @@
-{/*Este componente será responsable de mostrar una sola tarjeta de producto*/}
+import {Image,Pressable,StyleSheet,Text,View,} from 'react-native';
 
-import {Image,Pressable, StyleSheet,Text,View,} from 'react-native';
 import { Producto } from '../types';
+import { COLORS, SPACING, TYPOGRAPHY } from '../theme';
 
-interface ItemCardProps {
+    interface ItemCardProps {
     producto: Producto;
+    onPress?: (producto: Producto) => void;
     }
 
-    export default function ItemCard({ producto }: ItemCardProps) {
+    export default function ItemCard({
+    producto,
+    onPress,
+    }: ItemCardProps) {
     return (
-        <View style={styles.productCard}>
+        <Pressable
+        onPress={() => onPress?.(producto)}
+        style={({ pressed }) => [
+            styles.card,
+            pressed && styles.cardPressed,
+        ]}
+        >
         <Image
             source={producto.imagen}
-            style={styles.productImage}
+            style={styles.image}
             resizeMode="cover"
         />
 
-        <Text style={styles.productName}>
-            {producto.nombre}
-        </Text>
-
-        <Text style={styles.productDescription}>
-            {producto.descripcion}
-        </Text>
-
-        <Text style={styles.productPrice}>
-            {producto.precio}
-        </Text>
-
-        <Pressable
-            style={({ pressed }) => [
-            styles.productButton,
-            pressed && styles.productButtonPressed,
-            ]}
-            onPress={() =>
-            console.log(`${producto.nombre} seleccionado`)
-            }
-        >
-            <Text style={styles.productButtonText}>
-            Ver producto
+        <View style={styles.content}>
+            <View style={styles.badge}>
+            <Text style={styles.badgeText}>
+                {producto.categoria}
             </Text>
-        </Pressable>
+            </View>
+
+            <Text style={styles.name}>{producto.nombre}</Text>
+
+            <Text style={styles.description}>
+            {producto.descripcion}
+            </Text>
+
+            <Text style={styles.price}>{producto.precio}</Text>
         </View>
+        </Pressable>
     );
     }
 
     const styles = StyleSheet.create({
-    productCard: {
-        backgroundColor: '#F2E4D0',
+    card: {
+        backgroundColor: COLORS.surface,
+        borderRadius: 18,
+        overflow: 'hidden',
+        borderWidth: 1,
+        borderColor: COLORS.border,
+    },
+    cardPressed: {
+        opacity: 0.8,
+        transform: [{ scale: 0.98 }],
+    },
+    image: {
+        width: '100%',
+        height: 155,
+    },
+    content: {
+        padding: SPACING.md,
+        gap: SPACING.sm,
+    },
+    badge: {
+        alignSelf: 'flex-start',
+        backgroundColor: COLORS.surfaceAlt,
+        paddingHorizontal: SPACING.sm,
+        paddingVertical: SPACING.xs,
         borderRadius: 20,
-        padding: 14,
-        width: 220,
-        flexDirection: 'column',
     },
-    productImage: {
-        width: '100%',
-        height: 130,
-        borderRadius: 14,
-        marginBottom: 14,
+    badgeText: {
+        color: COLORS.textOnDark,
+        fontSize: TYPOGRAPHY.fontSizeXS,
+        fontWeight: TYPOGRAPHY.fontWeightMedium,
     },
-    productName: {
-        color: '#201713',
-        fontSize: 17,
-        fontWeight: 'bold',
+    name: {
+        color: COLORS.textPrimary,
+        fontSize: TYPOGRAPHY.fontSizeLG,
+        fontWeight: TYPOGRAPHY.fontWeightBold,
     },
-    productDescription: {
-        color: '#634638',
-        fontSize: 12,
-        lineHeight: 18,
-        marginTop: 6,
+    description: {
+        color: COLORS.textSecondary,
+        fontSize: TYPOGRAPHY.fontSizeSM,
+        lineHeight: 19,
     },
-    productPrice: {
-        color: '#634638',
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginTop: 12,
-    },
-    productButton: {
-        width: '100%',
-        backgroundColor: '#634638',
-        paddingVertical: 12,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginTop: 14,
-    },
-    productButtonPressed: {
-        opacity: 0.6,
-    },
-    productButtonText: {
-        color: '#F2E4D0',
-        fontSize: 13,
-        fontWeight: 'bold',
+    price: {
+        color: COLORS.primaryDark,
+        fontSize: TYPOGRAPHY.fontSizeLG,
+        fontWeight: TYPOGRAPHY.fontWeightBold,
     },
     });
