@@ -1,4 +1,4 @@
-{/*ALmacena los cafes*/}
+
 import { Producto } from '../types';
 
 export const productos: Producto[] = [
@@ -7,6 +7,7 @@ export const productos: Producto[] = [
         nombre: 'Moca de la casa',
         descripcion: 'Espresso, chocolate y leche cremosa.',
         precio: '$13.000',
+        categoria: 'Café caliente',
         imagen: require('../../assets/images/moca.jpg'),
     },
     {
@@ -14,6 +15,7 @@ export const productos: Producto[] = [
         nombre: 'Cold brew',
         descripcion: 'Café frío de sabor intenso y refrescante.',
         precio: '$10.000',
+        categoria: 'Café frío',
         imagen: require('../../assets/images/cold-brew.jpg'),
     },
     {
@@ -21,6 +23,7 @@ export const productos: Producto[] = [
         nombre: 'Latte caramelo',
         descripcion: 'Espresso suave con leche y caramelo.',
         precio: '$12.000',
+        categoria: 'Café caliente',
         imagen: require('../../assets/images/latte-caramelo.jpg'),
     },
     {
@@ -28,6 +31,55 @@ export const productos: Producto[] = [
         nombre: 'Iced Americano',
         descripcion: 'Espresso suave con sabor a chocolate con hielo refrescante.',
         precio: '$16.000',
+        categoria: 'Café frío',
         imagen: require('../../assets/images/iced-americano.webp'),
+    },
+    {
+        id: 5,
+        nombre: 'Americano',
+        descripcion: 'Café clásico de sabor equilibrado.',
+        precio: '$7.000',
+        categoria: 'Café caliente',
+        imagen: require('../../assets/images/americano.webp'),
+    },
+    {
+        id: 6,
+        nombre: 'Latte vainilla',
+        descripcion: 'Espresso con leche y un toque de vainilla.',
+        precio: '$12.000',
+        categoria: 'Café caliente',
+        imagen: require('../../assets/images/latte-vainilla.webp'),
+    },
+    {
+        id: 7,
+        nombre: 'Frappé de café',
+        descripcion: 'Bebida fría de café con hielo.',
+        precio: '$14.000',
+        categoria: 'Café frío',
+        imagen: require('../../assets/images/frappe-cafe.jpg'),
+    },
+    {
+        id: 8,
+        nombre: 'Chocolate caliente',
+        descripcion: 'Chocolate cremoso ideal para una tarde tranquila.',
+        precio: '$9.000',
+        categoria: 'Otras bebidas',
+        imagen: require('../../assets/images/chocolate.jpg'),
+    },
+    {
+        id: 9,
+        nombre: 'Latte de canela',
+        descripcion: 'Café con leche y un delicado toque de canela.',
+        precio: '$12.000',
+        categoria: 'Café caliente',
+        imagen: require('../../assets/images/latte-canela.webp'),
+    },
+    {
+        id: 10,
+        nombre: 'Cold brew vainilla',
+        descripcion: 'Café extraído en frío con notas de vainilla.',
+        precio: '$13.000',
+        categoria: 'Café frío',
+        imagen: require('../../assets/images/cold-brew-vainilla.jpg'),
     },
 ];
