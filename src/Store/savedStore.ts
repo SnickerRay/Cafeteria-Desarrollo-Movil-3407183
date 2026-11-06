@@ -1,3 +1,4 @@
+{/* Crea un almacén para administrar los cafés guardados */}
 import { create } from 'zustand';
 
 interface SavedStore {
