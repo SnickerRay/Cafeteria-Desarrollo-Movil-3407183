@@ -1,12 +1,16 @@
 {/*Inicia la app*/}
+
+import { NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import HomeScreen from './src/screens/homeScreen';
+
+import RootNavigator from './src/navigation/RootNavigator';
 
 export default function App() {
   return (
-    <>
+    <NavigationContainer>
       <StatusBar style="light" />
-      <HomeScreen />
-    </>
+      <RootNavigator />
+    </NavigationContainer>
   );
 }
+
